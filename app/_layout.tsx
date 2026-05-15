@@ -1,24 +1,37 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { FavoritesProvider } from "../context/FavoritesContext";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+// Tahan splash screen agar tidak hilang sebelum font siap
+SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+export default function Layout() {
+  // Load font kustom kamu
+  const [loaded, error] = useFonts({
+    "KronaOne": require("../assets/fonts/KronaOne-Regular.ttf"), // Pastikan nama file sesuai!
+  });
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    if (loaded || error) {
+      // Sembunyikan splash screen kalau font sudah siap (atau kalau ada error)
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  // Jangan render UI apa pun sebelum font siap
+  if (!loaded && !error) {
+    return null;
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <FavoritesProvider>
+      <Stack screenOptions={{ animation: "fade", headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="about" />
+        <Stack.Screen name="favorites" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </FavoritesProvider>
   );
 }
