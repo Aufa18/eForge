@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   Text,
   View,
@@ -95,18 +95,15 @@ export default function Index() {
   );
   const [filterOffset, setFilterOffset] = useState(0);
 
-  // Mencegat tombol Back fisik di Android
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        // Logika: Jika sedang mencari (teks ada) ATAU mode aplikasi bukan standar
-        // Ini akan mencakup kondisi saat data tidak ditemukan (pokemons.length === 0)
         if (searchText.length > 0 || appMode !== "infinite") {
           resetToInfiniteMode();
-          return true; // Berhasil dicegat dan direset
+          return true;
         }
 
-        return false; // Biarkan sistem Android keluar aplikasi jika sudah di default
+        return false;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -115,7 +112,7 @@ export default function Index() {
       );
 
       return () => backHandler.remove();
-    }, [searchText, appMode]), // Pastikan dependency ini ada agar state terbaru terbaca
+    }, [searchText, appMode]),
   );
 
   async function fetchPokemonsInfinite() {
@@ -165,10 +162,8 @@ export default function Index() {
     setIsLoading(true);
     setAppMode("server-filtered");
 
-    // --- 🛠️ PERBAIKAN: Bersihkan sisa data filter ---
-    setFilteredMetadata([]); // Kosongkan antrean agar onEndReached berhenti
-    setFilterOffset(0); // Reset angka offset
-    // -----------------------------------------------
+    setFilteredMetadata([]);
+    setFilterOffset(0);
 
     try {
       const response = await fetch(
@@ -253,7 +248,6 @@ export default function Index() {
   }
 
   const resetToInfiniteMode = async () => {
-    // 1. Reset state teks dan filter ke awal
     setSearchText("");
     setSelectedType("All");
     setSelectedGen("All");
@@ -262,21 +256,17 @@ export default function Index() {
     setFilterOffset(0);
     setAppMode("infinite");
 
-    // 2. Kosongkan layar dan nyalakan indikator loading
     setPokemons([]);
     setIsLoading(true);
 
-    // 3. Ambil ulang 20 data pertama secara langsung (paksa fetch)
     try {
       const response = await fetch(
         "https://pokeapi.co/api/v2/pokemon/?limit=20",
       );
       const data = await response.json();
 
-      // Simpan URL halaman berikutnya untuk onEndReached selanjutnya
       setNextUrl(data.next);
 
-      // Ambil gambar dan tipe detailnya
       const detailedPokemons = await Promise.all(
         data.results.map(async (pokemon: any) => {
           const res = await fetch(pokemon.url);
@@ -292,7 +282,6 @@ export default function Index() {
         }),
       );
 
-      // 4. Masukkan data segar ke dalam layar
       setPokemons(detailedPokemons);
     } catch (e) {
       console.log("Error reset:", e);

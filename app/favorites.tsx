@@ -51,7 +51,6 @@ export default function Favorites() {
   const [favoritePokemons, setFavoritePokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Ambil detail gambar dan tipe untuk setiap pokemon yang difavoritkan
   useEffect(() => {
     async function fetchFavoriteDetails() {
       if (favorites.length === 0) {
@@ -85,7 +84,7 @@ export default function Favorites() {
     }
 
     fetchFavoriteDetails();
-  }, [favorites]); // Berjalan ulang setiap kali data favorites berubah
+  }, [favorites]);
 
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);

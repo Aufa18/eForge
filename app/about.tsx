@@ -10,10 +10,9 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons"; // Menggunakan ikon bawaan Expo
+import { Ionicons } from "@expo/vector-icons";
 import { useFavorites } from "@/context/FavoritesContext";
 
-// Mapping warna background berdasarkan tipe utama
 const colorsByType: Record<string, string> = {
   normal: "#A8A77A",
   fire: "#EE8130",
@@ -34,17 +33,15 @@ const colorsByType: Record<string, string> = {
   fairy: "#D685AD",
 };
 
-// Mapping warna bar stat berdasarkan nama stat (meniru gambar)
 const statColors: Record<string, string> = {
-  hp: "#4CAF50", // Hijau
-  attack: "#F44336", // Merah
-  defense: "#FFC107", // Kuning
-  "special-attack": "#F44336", // Merah
-  "special-defense": "#FFC107", // Kuning
-  speed: "#2196F3", // Biru
+  hp: "#4CAF50",
+  attack: "#F44336",
+  defense: "#FFC107",
+  "special-attack": "#F44336",
+  "special-defense": "#FFC107",
+  speed: "#2196F3",
 };
 
-// Fungsi pembantu kapitalisasi teks
 const capitalizeFirstLetter = (string: string) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -84,21 +81,17 @@ export default function About() {
 
   if (!pokemonDetail) return null;
 
-  // Mengambil warna tipe pertama untuk background
   const primaryType = pokemonDetail.types[0].type.name;
   const bgColor = colorsByType[primaryType] || "#ccc";
 
-  // Format ID menjadi #001
   const formattedId = `#${String(pokemonDetail.id).padStart(3, "0")}`;
 
   return (
     <View style={styles.container}>
-      {/* Bagian Atas (Warna Tipe) */}
       <SafeAreaView
         style={[styles.headerBackground, { backgroundColor: bgColor }]}
         edges={["top"]}
       >
-        {/* Navigasi Bar */}
         <View style={styles.navBar}>
           <Pressable onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={28} color="white" />
@@ -113,13 +106,11 @@ export default function About() {
           </Pressable>
         </View>
 
-        {/* Info Nama & ID */}
         <View style={styles.headerInfo}>
           <View>
             <Text style={styles.pokemonName}>
               {capitalizeFirstLetter(pokemonDetail.name)}
             </Text>
-            {/* Badge Tipe */}
             <View style={styles.typesContainer}>
               {pokemonDetail.types.map((t: any) => (
                 <View key={t.type.name} style={styles.typeBadge}>
@@ -133,7 +124,6 @@ export default function About() {
           <Text style={styles.pokemonId}>{formattedId}</Text>
         </View>
 
-        {/* Gambar Pokemon */}
         <Image
           source={{
             uri: pokemonDetail.sprites.other["official-artwork"].front_default,
@@ -143,12 +133,10 @@ export default function About() {
         />
       </SafeAreaView>
 
-      {/* Bagian Bawah (Putih) */}
       <ScrollView
         style={styles.detailsContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section Info (Tinggi & Berat) */}
         <Text style={styles.sectionTitle}>Info</Text>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Tinggi</Text>
@@ -159,26 +147,22 @@ export default function About() {
           <Text style={styles.infoValue}>{pokemonDetail.weight / 10} kg</Text>
         </View>
 
-        {/* Section Statistik */}
         <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Statistik</Text>
         <View style={styles.statsContainer}>
           {pokemonDetail.stats.map((statItem: any) => {
             const statName = statItem.stat.name;
             const statValue = statItem.base_stat;
-            // Format nama stat agar rapi
             const displayName = statName
               .replace("-", " ")
               .replace(/\b\w/g, (l: string) => l.toUpperCase());
             const barColor = statColors[statName] || "#333";
 
-            // Hitung persentase panjang bar (asumsi max stat normal adalah sekitar 150)
             const widthPercent = Math.min((statValue / 150) * 100, 100);
 
             return (
               <View key={statName} style={styles.statRow}>
                 <Text style={styles.statLabel}>{displayName}</Text>
                 <Text style={styles.statValue}>{statValue}</Text>
-                {/* Progress Bar Container */}
                 <View style={styles.barContainer}>
                   <View
                     style={[
@@ -209,7 +193,6 @@ const styles = StyleSheet.create({
   headerBackground: {
     paddingHorizontal: 20,
     paddingBottom: 40,
-    // Tinggi background atas relatif menyesuaikan konten
   },
   navBar: {
     flexDirection: "row",
@@ -237,7 +220,7 @@ const styles = StyleSheet.create({
   },
   typesContainer: {
     flexDirection: "row",
-    gap: 8, // Memberi jarak antar badge
+    gap: 8,
   },
   typeBadge: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
@@ -255,7 +238,6 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: "center",
     marginTop: 20,
-    // Negative margin bawah agar gambar sedikit "keluar" atau menempel di batas layar putih (opsional)
     marginBottom: -20,
     zIndex: 10,
   },
@@ -263,7 +245,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
     paddingHorizontal: 30,
-    paddingTop: 40, // Ruang untuk visual gambar di atas
+    paddingTop: 40,
   },
   sectionTitle: {
     fontSize: 18,
@@ -291,7 +273,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   statsContainer: {
-    marginBottom: 40, // Jarak ekstra di paling bawah scroll
+    marginBottom: 40,
   },
   statRow: {
     flexDirection: "row",
